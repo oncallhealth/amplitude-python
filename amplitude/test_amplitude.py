@@ -16,12 +16,13 @@ class AmplitudeLoggerTest(testtools.TestCase):
     def setUp(self):
         super(AmplitudeLoggerTest, self).setUp()
         self.requests_mock = self.useFixture(fixture.Fixture())
-        self.amplitude_logger = amplitude.AmplitudeLogger(api_key=self.AMPLITUDE_API_KEY, 
+        self.amplitude_logger = amplitude.AmplitudeLogger(api_key=self.AMPLITUDE_API_KEY,
                                                           api_uri=self.AMPLITUDE_API_URI)
 
     def test_log_event(self):
         self.requests_mock.register_uri('POST', self.AMPLITUDE_API_URI, text=self.AMPLITUDE_TEST_RESPONSE)
-        event_args = {"device_id":"devid", "event_type":"testingtesting", "event_properties":{"foo":"bar", "zoo":"sofa"}}
+        event_args = {"device_id":"devid", "event_type":"testingtesting", "event_properties":{"foo":"bar", "zoo":"sofa"},
+            "user_properties":{"email": "foo@bar.co"}}
         event = self.amplitude_logger.create_event(**event_args)
         result = self.amplitude_logger.log_event(event)
         assert result.text == self.AMPLITUDE_TEST_RESPONSE
